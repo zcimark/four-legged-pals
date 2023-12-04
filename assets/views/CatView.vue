@@ -4,6 +4,6 @@ import PetForm from '../components/PetForm.vue'
 
 <template>
   <main>
-    <PetForm petType="Cat" />
+    <PetForm petType="cat" />
   </main>
 </template>

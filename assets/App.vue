@@ -5,7 +5,7 @@ import FourLeggedPal from './components/FourLeggedPal.vue'
 
 <template>
   <header>
-    <img alt="Vue logo" class="logo" src="./styles/logo.svg" width="125" height="125" />
+    <img alt="Vue logo" class="logo" src="./styles/paw-print-svgrepo-com.svg" width="125" height="125" />
 
     <div class="wrapper">
       <FourLeggedPal msg="Is your Four Legged Pal a Cat or a Dog?" />
