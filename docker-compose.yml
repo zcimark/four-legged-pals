@@ -1,0 +1,23 @@
+version: '3.7'
+services:
+    web:
+        build:
+            context: .
+            dockerfile: ./docker/Dockerfile
+        ports:
+            - "8087:80"
+            - "9446:443"
+            - "5173:5173"
+        volumes:
+            - ./public:/var/www/html
+            - ./:/var/www
+            - ./docker/php-local-mods.ini:/usr/local/etc/php/conf.d/php-local-mods.ini
+        working_dir: /var/www/html
+        environment:
+            DOCKER_ENV: dev
+            XDEBUG_ENABLED: 1
+            XDEBUG_REMOTE_AUTOSTART: 1
+            XDEBUG_MAXNESTING_LEVEL: 1000
+            XDEBUG_REMOTE_CONNECT_BACK: 1
+            XDEBUG_REMOTE_HOST: host.docker.internal
+            PHP_IDE_CONFIG: serverName=localhost
