@@ -13,6 +13,7 @@ PostgreSQL
 Docker
 Doctrine
 
+![Screen Shot 2023-12-05 at 2 42 20 PM](https://github.com/zcimark/four-legged-pals/assets/54482154/538a0df5-cc90-4a26-9fc1-c26373e90673)
 
 ## Development Setup
 Clone repo
