@@ -7,7 +7,6 @@ services:
         ports:
             - "8087:80"
             - "9446:443"
-            - "5173:5173"
         volumes:
             - ./public:/var/www/html
             - ./:/var/www

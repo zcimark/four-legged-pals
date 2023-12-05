@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import PetFormInput from './PetFormInput.vue'
-import DocumentationIcon from './icons/IconDocumentation.vue'
 import IconPawPrint from './icons/IconPawPrint.vue';
 import vSelect from 'vue-select'
 import 'vue-select/dist/vue-select.css';
@@ -14,7 +13,6 @@ interface Pet {
   type: string;
   breed: string;
   gender: string;
-  mixedBreed: string;
 }
 
 const pet = ref<Pet>({
@@ -22,10 +20,8 @@ const pet = ref<Pet>({
   type: '',
   breed: '',
   gender: '',
-  mixedBreed: ''
 });
 
-const message = ref('');
 const toast = useToast();
 const breedEmit = defineEmits(['breedSelected']);
 
@@ -33,9 +29,8 @@ const props = defineProps<{
   petType: string
 }>()
 
-const breedSelection = ref('Known');
-const isBreedInputVisible = ref(false);
-
+const message = ref('');
+const mixedBreedSelection = ref('');
 const breeds = ref([]);
 
 
@@ -54,42 +49,49 @@ const fetchBreedData = async () => {
   }
 };
 
-// Call the fetchData function when the component is created
 onMounted(fetchBreedData);
 
-const handlePetName = () => {
+const handleBreedSelection = () => {
   if (!pet.value.name) {
     toast.error('You must enter a name for your four legged pal.');
     return;
   }
+
+  resetMixedBreed();
 }
 
 const resetMixedBreed = () => {
-  if (pet.value.breed !== "It's a mix") {
-    pet.value.mixedBreed = '';
+  if (pet.value.breed !== "Can't find it?") {
+    mixedBreedSelection.value = '';
+  }
+}
+
+const ifMixedBreed = () => {
+  if (mixedBreedSelection.value) {
+    pet.value.breed = mixedBreedSelection.value;
   }
 }
 
 const onSubmitForm = async () => {
   try {
+    ifMixedBreed();
     console.log(pet.value);
-    const response = await fetch('/pet/post', {
+    const response = await fetch('/api/pet-register', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
-
       },
       body: JSON.stringify(pet.value),
     });
-
+    console.log(response);
     const data = await response.json();
-
+    console.log(data);
     if (data.message) {
       message.value = data.message;
-      // Optionally, reset the form or redirect to a new page
+
     } else if (data.errors) {
       console.error('Form submission errors:', data.errors);
-      // Handle form validation errors
+       // Handle form validation errors
     }
   } catch (error) {
     console.error('Error submitting form:', error);
@@ -120,7 +122,7 @@ const onSubmitForm = async () => {
       <template #heading>What breed is your {{ petType }} {{ pet.name }}?</template>
 
       <div style="background: #282c34; padding: 1rem; border-radius: 0.3rem">
-        <v-select @click="handlePetName" v-model="pet.breed" :options="breeds" required>
+        <v-select @click="handleBreedSelection" v-model="pet.breed" :options="breeds" required>
         </v-select>
       </div>
 
@@ -128,14 +130,14 @@ const onSubmitForm = async () => {
         <div>
           Choose One
         </div>
-        <input type="radio" id="dontKnow" value="I don't know" v-model="pet.breed" />
+        <input type="radio" id="dontKnow" value="I don't know" v-model="pet.breed" @change="resetMixedBreed" />
         <label for="dontKnow"> I don't know</label>
       </div>
-      <div>
-        <input type="radio" id="itsAMix" v-model="pet.breed" value="Can't find it?" @change="resetMixedBreed" />
-        <label for="itsAMix"> It's a mix</label>
-        <div class="pet-input">
-          <input class="pet-input-box" type="text" id="petBreedInput" v-model="pet.mixedBreed"
+      <div v-if="pet.breed == 'Can\'t find it?' || pet.breed == 'I don\'t know'">
+        <input type="radio" id="mix" v-model="pet.breed" value="Can't find it?" @change="resetMixedBreed" />
+        <label for="mix"> It's a mix</label>
+        <div v-if="pet.breed == 'Can\'t find it?'" class="pet-input">
+          <input class="pet-input-box" type="text" id="petBreedInput" v-model="mixedBreedSelection"
             placeholder="Enter the mix here!" />
         </div>
       </div>
@@ -150,11 +152,11 @@ const onSubmitForm = async () => {
       <template #heading>What gender are they?</template>
 
       <div>
-        <input type="radio" id="male" v-model="pet.gender" value="male" @change="resetMixedBreed" />
+        <input type="radio" id="male" v-model="pet.gender" value="male" />
         <label for="male"> Male</label>
-</div>
-<div>
-        <input type="radio" id="itsAMix" v-model="pet.gender" value="female" @change="resetMixedBreed" />
+      </div>
+      <div>
+        <input type="radio" id="itsAMix" v-model="pet.gender" value="female" />
         <label for="female"> Female</label>
 
       </div>
