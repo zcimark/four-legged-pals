@@ -15,13 +15,16 @@ Doctrine
 
 
 ## Development Setup
+Clone repo
 
-Build the application image
+Build the containers and images
 
 `docker compose up`
 
-Once completed, open terminal in repo directory and run this cmd to migrate the db
+Once completed, open terminal in repo directory and install dependencies 
+`docker compose exec -w /var/www web composer install && npm install`
 
+Migrate the database using this command
 `docker compose exec -w /var/www web php bin/console doctrine:migrations:migrate`
 
 Check things are working
