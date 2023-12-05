@@ -72,10 +72,28 @@ const ifMixedBreed = () => {
   }
 }
 
+const validateFields = () => {
+  if (!pet.value.name) {
+    toast.error('You must enter a name for your four legged pal.');
+    return;
+  }
+
+  if (!pet.value.breed) {
+    toast.error('You must enter a breed for your four legged pal.');
+    return;
+  }
+
+  if (!pet.value.gender) {
+    toast.error('You must enter a name for your four legged pal.');
+    return;
+  }
+}
+
 const onSubmitForm = async () => {
   try {
+    validateFields();
     ifMixedBreed();
-    console.log(pet.value);
+
     const response = await fetch('/api/pet-register', {
       method: 'POST',
       headers: {
@@ -83,18 +101,17 @@ const onSubmitForm = async () => {
       },
       body: JSON.stringify(pet.value),
     });
-    console.log(response);
-    const data = await response.json();
-    console.log(data);
-    if (data.message) {
-      message.value = data.message;
 
-    } else if (data.errors) {
+    const data = await response.json();
+    toast.success('Your "Four Legged Pal" ' + pet.value.name + ' has been successfully registered!');
+
+    if (data.errors) {
       console.error('Form submission errors:', data.errors);
-       // Handle form validation errors
+      //TODO
+      // Handle form validation errors more efficiently
     }
   } catch (error) {
-    console.error('Error submitting form:', error);
+    toast.error('Error submitting form:', error);
   }
 };
 
